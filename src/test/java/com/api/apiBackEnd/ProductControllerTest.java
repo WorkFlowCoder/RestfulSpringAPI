@@ -1,8 +1,10 @@
 package com.api.apiBackEnd;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -123,31 +126,34 @@ public class ProductControllerTest {
 
     @Test
     public void testUpdateProduct() throws Exception {
-        Product updatedProduct = new Product(1, "Smartphone Z", "Updated smartphone", "smartphone_y.png", "Electronics", 799.99, 40, 5, "CODE_1", 1, "PRODUCT_1", "INSTOCK");
-        when(productService.updateProduct(Mockito.any(Product.class), Mockito.eq(1))).thenReturn(updatedProduct);
-        mockMvc.perform(put("/products/1")
+        int id = 1;
+        Product updateProduct = new Product();
+        updateProduct.setName("Product Test");
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name","new name");
+
+        Product updatedProduct = new Product();
+        updatedProduct.setId(id);
+        updatedProduct.setName("new name");
+
+        when(productService.updateProduct(Mockito.eq(id),Mockito.any(Map.class))).thenReturn(updatedProduct);
+
+        mockMvc.perform(patch("/products/1")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(updatedProduct)))
+        .content("{\"name\":\"new name\"}"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.name", is("Smartphone Z")));
+        .andExpect(jsonPath("$.name", is("new name")));
     }
 
     @Test
     public void testUpdateProductNotFound() throws Exception {
-        Product updatedProduct = new Product(1, "Smartphone Z", "Updated smartphone", "smartphone_y.png", "Electronics", 799.99, 40, 5, "CODE_1", 1, "PRODUCT_1", "INSTOCK");
-        when(productService.updateProduct(Mockito.any(Product.class), Mockito.eq(1))).thenThrow(new NoSuchElementException("Product with id 1 not found"));
-        mockMvc.perform(put("/products/1")
+        int id = 1;
+        when(productService.updateProduct(Mockito.eq(id),Mockito.any(Map.class))).thenThrow(new NoSuchElementException("Product with id 1 not found"));
+        mockMvc.perform(patch("/products/1")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(new ObjectMapper().writeValueAsString(updatedProduct)))
-        .andExpect(status().isNotFound())  // Vérifier le code d'erreur 404
-        .andExpect(jsonPath("$.message", is("Product with id 1 not found")));  // Vérifier le message d'erreur
+        .content("{\"name\":\"new name\"}"))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message", is("Product with id 1 not found")));
     }
 
-    @Test void testUpdateProductBadRequest() throws Exception {
-        Product invalidProduct = new Product(); 
-        mockMvc.perform(put("/products/1")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(invalidProduct)))
-            .andExpect(status().isBadRequest());
-    }
 }

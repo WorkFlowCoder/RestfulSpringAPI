@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,10 +63,10 @@ public class ProductController {
         return new  ResponseEntity<>(createProduct, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable int id, @Valid @RequestBody Product product){
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable int id, @Valid @RequestBody Map<String,Object> product){
         try{
-            Product updateProduct = productService.updateProduct(product,id);
+            Product updateProduct = productService.updateProduct(id,product);
             return ResponseEntity.ok(updateProduct);
         } catch (NoSuchElementException e){
             Map<String,String> response = new HashMap<>();

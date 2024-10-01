@@ -97,15 +97,12 @@ The API will be available at http://localhost:8080.
 ## Update a Product
 
 - **URL**: `/products/{id}`
-- **Method**: `PUT`
+- **Method**: `PATCH`
 - **Request Body**:
 
 ```json
 {
   "name": "Smartphone Z",
-  "description": "Updated smartphone model",
-  "image": "smartphone_z.png",
-  "category": "Electronics",
   "price": 899.99,
   "quantity": 30
 }

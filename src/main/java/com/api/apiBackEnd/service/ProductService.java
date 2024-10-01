@@ -1,10 +1,12 @@
 package com.api.apiBackEnd.service;
 
-import java.util.Date;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 
 import com.api.apiBackEnd.model.Product;
@@ -36,17 +38,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Product product, int id){
+    public Product updateProduct(int id, Map<String,Object> updates){
         Product existingProduct = productRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Product with id "+id+" not found"));
-        existingProduct.setName(product.getName());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setQuantity(product.getQuantity());
-        existingProduct.setImage(product.getImage());
-        existingProduct.setCategory(product.getCategory());
-        long timestamp = new Date().getTime();
-        existingProduct.setUpdatedAt(timestamp);
+        updates.forEach((key,value) -> {
+            Field field = ReflectionUtils.findField(Product.class,key);
+            if(field  != null){
+                field.setAccessible(true);
+                ReflectionUtils.setField(field,existingProduct,value);
+            }
+        });
         return productRepository.save(existingProduct);
     }
 
