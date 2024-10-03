@@ -22,12 +22,12 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product findProductById(int id){
+    public Product findProductById(Long id){
         return productRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Product with id "+id+" not found"));
     }
 
-    public void deleteProductById(int id){
+    public void deleteProductById(Long id){
         if(!productRepository.existsById(id)){
             throw new NoSuchElementException("Product with id "+id+" not found");
         }
@@ -38,7 +38,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product updateProduct(int id, Map<String,Object> updates){
+    public Product updateProduct(Long id, Map<String,Object> updates){
         Product existingProduct = productRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Product with id "+id+" not found"));
         updates.forEach((key,value) -> {
@@ -48,6 +48,7 @@ public class ProductService {
                 ReflectionUtils.setField(field,existingProduct,value);
             }
         });
+        existingProduct.setUpdatedAt(System.currentTimeMillis());
         return productRepository.save(existingProduct);
     }
 

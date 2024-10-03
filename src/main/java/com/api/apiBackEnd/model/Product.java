@@ -20,7 +20,7 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     @NotBlank(message="Product name is required")
     @Column(name="name", insertable=true, updatable=true, nullable=false)
@@ -64,14 +64,14 @@ public class Product implements Serializable {
     private String code;
 
     @Column(name="createdAt", insertable=true, updatable=true, nullable=false)
-    private long createdAt = System.currentTimeMillis();
+    private Long createdAt = System.currentTimeMillis();
 
     @Column(name="updatedAt", insertable=true, updatable=true, nullable=false)
-    private long updatedAt = System.currentTimeMillis();
+    private Long updatedAt = System.currentTimeMillis();
 
     public Product(){}
 
-    public Product(int id, String name, String description, String image,String category, double price, int quantity, int rating,
+    public Product(Long id, String name, String description, String image,String category, double price, int quantity, int rating,
         String code, int shellId, String internalReference, String inventoryStatus){
         this.id = id;
         this.name=name;
@@ -86,7 +86,7 @@ public class Product implements Serializable {
         this.rating=rating;
         this.inventoryStatus=inventoryStatus;
         Date currentDate = new Date();
-        long timestamp = currentDate.getTime();
+        Long timestamp = currentDate.getTime();
         this.createdAt=timestamp;
         this.updatedAt=timestamp;
     }
@@ -105,16 +105,16 @@ public class Product implements Serializable {
         this.rating=rating;
         this.inventoryStatus=inventoryStatus;
         Date currentDate = new Date();
-        long timestamp = currentDate.getTime();
+        Long timestamp = currentDate.getTime();
         this.createdAt=timestamp;
         this.updatedAt=timestamp;
     }
 
-    public int getId(){
+    public Long getId(){
         return this.id;
     }
 
-    public void setId(int id){
+    public void setId(Long id){
         this.id = id;
     }
 
@@ -209,19 +209,19 @@ public class Product implements Serializable {
         this.code = code;
     }
 
-    public long getCreatedAt(){
+    public Long getCreatedAt(){
         return this.createdAt;
     }
 
-    public void setCreatedAt(long createdAt){
+    public void setCreatedAt(Long createdAt){
         this.createdAt = createdAt;
     }
 
-    public long getupdatedAt(){
+    public Long getupdatedAt(){
         return this.updatedAt;
     }
 
-    public void setUpdatedAt(long updatedAt){
+    public void setUpdatedAt(Long updatedAt){
         this.updatedAt = updatedAt;
     }
 

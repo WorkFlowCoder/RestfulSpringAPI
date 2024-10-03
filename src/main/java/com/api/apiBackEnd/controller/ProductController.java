@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +37,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable int id){
+    public ResponseEntity<Product> findProductById(@PathVariable Long id){
         try{
             Product product = productService.findProductById(id);
         return ResponseEntity.ok(product);
@@ -48,7 +47,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProductById(@PathVariable int id){
+    public ResponseEntity<String> deleteProductById(@PathVariable Long id){
         try{
             productService.deleteProductById(id);
             return ResponseEntity.noContent().build();
@@ -64,7 +63,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable int id, @Valid @RequestBody Map<String,Object> product){
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Map<String,Object> product){
         try{
             Product updateProduct = productService.updateProduct(id,product);
             return ResponseEntity.ok(updateProduct);
