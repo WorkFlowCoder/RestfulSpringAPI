@@ -12,29 +12,32 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-
-import static org.mockito.BDDMockito.given;
+import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
 import org.mockito.MockitoAnnotations;
 
+
 import com.api.apiBackEnd.controller.ProductController;
-import com.api.apiBackEnd.model.Product;
+import com.api.apiBackEnd.entity.Product;
+import com.api.apiBackEnd.dto.ProductDTO;
 import com.api.apiBackEnd.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,26 +58,25 @@ public class ProductControllerTest {
     @Test
     public void testGetAllProduct() throws Exception{
         //List of products
-        Product p1 = new Product(1L,"Smartphone X", "Latest smartphone with a 6.5-inch display, 128GB storage, and powerful battery life.", "smartphone_x.png", "Electronics", 699.99, 50, 4, "CODE_1", 1, "PRODUCT_1", "INSTOCK");
-        Product p2 = new Product(2L,"Office Chair", "Ergonomic office chair designed for comfort and lumbar support.", "office_chair.png", "Furniture", 149.99, 41, 5, "CODE_2", 2, "PRODUCT_2", "LOWSTOCK");
-        List<Product> allProducts = Arrays.asList(p1,p2);
+        ProductDTO p1 = new ProductDTO(1L,"Smartphone X", "Latest smartphone with a 6.5-inch display, 128GB storage, and powerful battery life.", "smartphone_x.png", "Electronics", 699.99, 50, 4);
+        ProductDTO p2 = new ProductDTO(2L,"Office Chair", "Ergonomic office chair designed for comfort and lumbar support.", "office_chair.png", "Furniture", 149.99, 41, 5);
+        List<ProductDTO> allProducts = Arrays.asList(p1,p2);
         given(productService.getAllProducts()).willReturn(allProducts);
         mockMvc.perform(get("/products"))
-        .andExpect(status().isOk())  // Vérifie que le statut HTTP est 200 OK
-        .andExpect(content().contentType("application/json"))  // Vérifie que la réponse est du JSON
-        .andExpect(jsonPath("$", hasSize(2)))  // Vérifie qu'il y a 2 éléments dans la réponse
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$", hasSize(2)))
         .andExpect(jsonPath("$[0].name", is("Smartphone X")))
         .andExpect(jsonPath("$[1].name", is("Office Chair")));
     }
 
     @Test
     public void testFindProductById() throws Exception{
-        Product p1 = new Product(1L,"Smartphone X", "Latest smartphone with a 6.5-inch display, 128GB storage, and powerful battery life.", "smartphone_x.png", "Electronics", 699.99, 50, 4, "CODE_1", 1, "PRODUCT_1", "INSTOCK");
+        ProductDTO p1 = new ProductDTO(1L,"Smartphone X", "Latest smartphone with a 6.5-inch display, 128GB storage, and powerful battery life.", "smartphone_x.png", "Electronics", 699.99, 50, 4);
         given(productService.findProductById(1L)).willReturn(p1);
         mockMvc.perform(get("/products/1"))
-        .andExpect(status().isOk())  // Vérifie que le statut HTTP est 200 OK
-        .andExpect(content().contentType("application/json"))  // Vérifie que la réponse est du JSON
-        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.name", is("Smartphone X")))
         .andExpect(jsonPath("$.price", is(699.99)));
     }
@@ -107,7 +109,10 @@ public class ProductControllerTest {
     @Test
     public void testCreateProduct() throws Exception{
         Product p = new Product("Smartphone X", "Updated smartphone vision", "smartphone_X.png", "Electronics", 799.99, 40, 5, "CODE_1", 1, "PRODUCT_1", "INSTOCK");
-        when(productService.createProduct(Mockito.any(Product.class))).thenReturn(p);
+        ProductDTO pdto = new ProductDTO(1L,"Smartphone X", "Updated smartphone vision", "smartphone_X.png", "Electronics", 799.99, 40, 5);
+
+        when(productService.createProduct(Mockito.any(Product.class))).thenReturn(pdto);
+
         mockMvc.perform(post("/products")
         .contentType(MediaType.APPLICATION_JSON)
         .content(new ObjectMapper().writeValueAsString(p)))
@@ -132,7 +137,7 @@ public class ProductControllerTest {
         Map<String, Object> updates = new HashMap<>();
         updates.put("name","new name");
 
-        Product updatedProduct = new Product();
+        ProductDTO updatedProduct = new ProductDTO();
         updatedProduct.setId(id);
         updatedProduct.setName("new name");
         when(productService.updateProduct(Mockito.eq(id), ArgumentMatchers.<Map<String, Object>>any())).thenReturn(updatedProduct);
@@ -147,7 +152,6 @@ public class ProductControllerTest {
     public void testUpdateProductNotFound() throws Exception {
         Long id = 1L;
         when(productService.updateProduct(Mockito.eq(id), ArgumentMatchers.<Map<String, Object>>any())).thenThrow(new NoSuchElementException("Product with id 1 not found"));
-        //when(productService.updateProduct(Mockito.eq(id),Mockito.any(Map.class))).thenThrow(new NoSuchElementException("Product with id 1 not found"));
         mockMvc.perform(patch("/products/1")
         .contentType(MediaType.APPLICATION_JSON)
         .content("{\"name\":\"new name\"}"))

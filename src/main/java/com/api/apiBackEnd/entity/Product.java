@@ -1,7 +1,4 @@
-package com.api.apiBackEnd.model;
-
-import java.io.Serializable;
-import java.util.Date;
+package com.api.apiBackEnd.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +13,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name="product")
-public class Product implements Serializable {
+public class Product{
 
     @Id
     @GeneratedValue
@@ -85,10 +82,6 @@ public class Product implements Serializable {
         this.code=code;
         this.rating=rating;
         this.inventoryStatus=inventoryStatus;
-        Date currentDate = new Date();
-        Long timestamp = currentDate.getTime();
-        this.createdAt=timestamp;
-        this.updatedAt=timestamp;
     }
 
     public Product(String name, String description, String image,String category, double price, int quantity, int rating,
@@ -104,10 +97,6 @@ public class Product implements Serializable {
         this.code=code;
         this.rating=rating;
         this.inventoryStatus=inventoryStatus;
-        Date currentDate = new Date();
-        Long timestamp = currentDate.getTime();
-        this.createdAt=timestamp;
-        this.updatedAt=timestamp;
     }
 
     public Long getId(){

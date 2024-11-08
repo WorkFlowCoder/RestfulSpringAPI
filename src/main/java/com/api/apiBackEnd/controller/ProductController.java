@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.apiBackEnd.model.Product;
+import com.api.apiBackEnd.entity.Product;
+import com.api.apiBackEnd.dto.ProductDTO;
 import com.api.apiBackEnd.service.ProductService;
 
 import jakarta.validation.Valid;
@@ -32,14 +33,14 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("")
-    public List<Product> getAllProducts(){
+    public List<ProductDTO> getAllProducts(){
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable Long id){
+    public ResponseEntity<ProductDTO> findProductById(@PathVariable Long id){
         try{
-            Product product = productService.findProductById(id);
+            ProductDTO product = productService.findProductById(id);
         return ResponseEntity.ok(product);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build(); // 404 Not Found
@@ -57,16 +58,14 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
-        Product createProduct = productService.createProduct(product);
-        return new  ResponseEntity<>(createProduct, HttpStatus.CREATED);
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product){
+        return new  ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Map<String,Object> product){
         try{
-            Product updateProduct = productService.updateProduct(id,product);
-            return ResponseEntity.ok(updateProduct);
+            return ResponseEntity.ok(productService.updateProduct(id,product));
         } catch (NoSuchElementException e){
             Map<String,String> response = new HashMap<>();
             response.put("message","Product with id "+id+" not found");

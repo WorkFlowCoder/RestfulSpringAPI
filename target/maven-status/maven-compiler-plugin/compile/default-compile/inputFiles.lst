@@ -1,5 +1,6 @@
 /home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/ApiBackEndApplication.java
 /home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/controller/ProductController.java
-/home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/model/Product.java
+/home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/dto/ProductDTO.java
+/home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/entity/Product.java
+/home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/repository/ProductRepository.java
 /home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/service/ProductService.java
-/home/julia/Bureau/RestFulSpringApi/src/main/java/com/api/apiBackEnd/shared/ProductRepository.java

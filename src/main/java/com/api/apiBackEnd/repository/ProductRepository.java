@@ -1,9 +1,9 @@
-package com.api.apiBackEnd.shared;
+package com.api.apiBackEnd.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.api.apiBackEnd.model.Product;
+import com.api.apiBackEnd.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long> {
